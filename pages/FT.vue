@@ -16,19 +16,7 @@
         max-height="667"
       >
         <v-card min-height="300" style="height: 667px">
-          <v-card-text
-            ><br /><br />BONSOIR ! On a malheureusement pas une quantité infinie
-            de matos! Mais heureusement nos chers amis du BDE sont là, on va
-            leur emprunter une première vague de matos ! RDV local pour prendre
-            les clés du Camion (20m3) et direction la MDE ! Va a l'accueil et
-            demande à voir le responsable log (ANTONIN CANAL) Tu lui demandes la
-            liste de matos suivante : 1 Transpalette Max Table de réception
-            extérieur Max Banc de réception extérieur 10 Cagette verte pliable
-            Ensuite tu amènes tout ça au chalet backline (range ça bien que ça
-            gène pas !) si le chalet est pas encore là , tu déposes tout ça au
-            local ! Ensuite tu ramènes le camion au local ! et tu reposes les
-            clefs !</v-card-text
-          >
+          <v-card-text><br /><br /> </v-card-text>
         </v-card>
       </v-sheet>
     </v-card>

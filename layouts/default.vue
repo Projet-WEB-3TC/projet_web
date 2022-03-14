@@ -81,6 +81,11 @@ export default {
           title: 'Inspire',
           to: '/inspire',
         },
+        {
+          icon: 'mdi-calendar',
+          title: 'Calendar',
+          to: '/calendar',
+        },
       ],
       miniVariant: false,
       right: true,

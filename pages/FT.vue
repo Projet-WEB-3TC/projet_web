@@ -2,8 +2,16 @@
   <v-app>
     <v-card class="overflow-hidden">
       <v-app-bar absolute scroll-target="#scrolling-techniques-4">
-        <v-btn class="ma-2" color="orange darken-2" dark>
-          <v-icon dark left> mdi-arrow-left </v-icon>Back
+        <v-btn
+          class="ma-2"
+          raised
+          small
+          color="orange darken-2"
+          dark
+          onclick="location.href='http://localhost:3000/'"
+          type="button"
+        >
+          <v-icon dark left> mdi-arrow-left </v-icon>
         </v-btn>
 
         <v-toolbar-title>Ta fiche tâche</v-toolbar-title>

@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <v-card class="overflow-hidden">
-      <v-app-bar absolute color="white" scroll-target="#scrolling-techniques-4">
+      <v-app-bar absolute scroll-target="#scrolling-techniques-4">
         <v-app-bar-nav-icon></v-app-bar-nav-icon>
 
         <v-toolbar-title>Ta fiche tâche</v-toolbar-title>

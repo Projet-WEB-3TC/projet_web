@@ -81,6 +81,11 @@ export default {
           title: 'Inspire',
           to: '/inspire',
         },
+        {
+          icon: 'mdi-bell',
+          title: 'Notification test',
+          to: '/notification_test',
+        },
       ],
       miniVariant: false,
       right: true,

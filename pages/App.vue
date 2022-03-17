@@ -1,5 +1,10 @@
 <template>
   <div id="app" >
+    <v-app-bar-nav-icon>
+      <v-btn icon @click="toggleTheme">
+        <v-icon>mdi-theme-light-dark</v-icon>
+      </v-btn>
+    </v-app-bar-nav-icon>
       <v-card dark max-width="99%">
         <v-container fluid>
           <v-row
@@ -40,8 +45,10 @@
               ></v-img>
               <v-card-title>{{ firstname }} {{ lastname }} </v-card-title>
               <v-card-subtitle>{{ nickname }} Culture </v-card-subtitle>
+              <v-btn icon :href="'tel:+33' + telephone">
+                <v-icon small>mdi-phone</v-icon>
+              </v-btn>
               <v-card-text>{{ telephone }} </v-card-text>
-              <v-spacer></v-spacer>
               <v-card-actions>
                 <!-- mettre le texte de description plus petit-->
                 <v-btn color="#ca1501" text>Plus </v-btn>
@@ -72,6 +79,11 @@
 <script>
 export default {
   name: "App",
+  methods:{
+    toggleTheme() {
+      this.$vuetify.theme.dark = '#4caf50';
+    },
+  },
   data() {
     return {
       id: 5,
@@ -95,6 +107,6 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #0f0d0f;
-  margin-top: 20px;
+  margin-top: 15px;
 }
 </style>

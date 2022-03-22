@@ -1,10 +1,5 @@
 <template>
   <div id="app">
-    <v-app-bar-nav-icon>
-      <v-btn icon @click="toggleTheme">
-        <v-icon>mdi-theme-light-dark</v-icon>
-      </v-btn>
-    </v-app-bar-nav-icon>
     <v-card dark max-width="99%">
       <v-container fluid>
         <v-row>
@@ -81,11 +76,6 @@ export default {
       items: ['hard1', 'hard2', 'hard3', 'hard4', 'hard5'],
       value: null,
     }
-  },
-  methods: {
-    toggleTheme() {
-      this.$vuetify.theme.dark = '#4caf50'
-    },
   },
 }
 </script>

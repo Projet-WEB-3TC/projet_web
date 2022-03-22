@@ -1,9 +1,7 @@
-<template>
-  <h1>HELLO BOY</h1>
-</template>
+<template><div></div></template>
 
 <script>
-export default {
-  name: 'IndexPage',
-}
+export default {}
 </script>
+
+<style></style>

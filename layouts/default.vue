@@ -6,7 +6,7 @@
         <v-icon>mdi-apps</v-icon>
       </v-btn>
 
-      <v-btn value="Calendar">
+      <v-btn value="Calendar" to="/calendar">
         <span>Calendrier</span>
         <v-icon>mdi-calendar</v-icon>
       </v-btn>

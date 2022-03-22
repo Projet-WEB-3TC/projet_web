@@ -39,7 +39,7 @@
     </v-app-bar>
     <v-main>
       <v-container style="max-width: none">
-        <nuxt />
+        <Nuxt />
       </v-container>
     </v-main>
   </v-app>
@@ -50,7 +50,6 @@ const { version } = require('../package.json')
 
 export default {
   name: 'DefaultLayout',
-  middleware: 'user',
   data() {
     return {
       drawer: false,

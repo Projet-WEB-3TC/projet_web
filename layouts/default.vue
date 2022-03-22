@@ -1,7 +1,7 @@
 <template>
   <v-app dark>
     <v-bottom-navigation app fixed grow color="primary">
-      <v-btn value="Acceuil">
+      <v-btn value="Accueil" to="/">
         <span>Accueil</span>
         <v-icon>mdi-apps</v-icon>
       </v-btn>
@@ -11,7 +11,7 @@
         <v-icon>mdi-calendar</v-icon>
       </v-btn>
 
-      <v-btn value="Trombi">
+      <v-btn value="Trombi" to="/trombinoscope">
         <span>Trombinoscope</span>
         <v-icon>mdi-image</v-icon>
       </v-btn>

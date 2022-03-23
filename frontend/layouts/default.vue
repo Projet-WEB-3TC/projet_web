@@ -1,6 +1,6 @@
 <template>
   <v-app dark>
-    <v-bottom-navigation app fixed grow color="primary">
+    <v-bottom-navigation fixed app :style="isJauneActive ? jauneStyle : ''">
       <v-btn value="Accueil" to="/">
         <span>Accueil</span>
         <v-icon>mdi-apps</v-icon>
@@ -17,7 +17,7 @@
       </v-btn>
     </v-bottom-navigation>
     <v-app-bar fixed app :style="isJauneActive ? jauneStyle : ''">
-      <v-img
+      <v-img @click="clickOnTitle"
         :src="'img/logo/' + logo"
         alt="overbookd"
         class="logo"
@@ -94,7 +94,11 @@ export default {
       this.counter++
       if (this.counter > 10) {
         this.isJauneActive = true
-        this.title = 'RICARD - Pastis'
+      }
+      this.counter++
+      if(this.isJauneActive === true && this.counter > 20){
+        this.isJauneActive = false
+        this.counter = 0
       }
     },
   },

@@ -58,6 +58,7 @@ export default {
       isJauneActive: false,
       jauneStyle: 'background-color: #FFD13C; color: #003C71',
       isDialogOpen: false,
+      zoomEnabled: false,
       version,
 
       file: undefined,

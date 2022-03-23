@@ -11,7 +11,9 @@
     "lint:prettier": "prettier --check .",
     "lint": "npm run lint:js && npm run lint:prettier",
     "lintfix": "prettier --write --list-different . && npm run lint:js -- --fix",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "openios": "nuxt build && npx cap copy && npx cap open ios",
+    "openandroid": "nuxt build && npx cap copy && npx cap open android"
   },
   "lint-staged": {
     "*.{js,vue}": "eslint --cache",

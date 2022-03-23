@@ -3,7 +3,7 @@
     <v-bottom-navigation fixed app :style="isJauneActive ? jauneStyle : ''">
       <v-btn value="Accueil" to="/">
         <span>Accueil</span>
-        <v-icon>mdi-apps</v-icon>
+        <v-icon>mdi-home</v-icon>
       </v-btn>
 
       <v-btn value="Calendar" to="/calendar">
@@ -12,12 +12,12 @@
       </v-btn>
 
       <v-btn value="Trombi" to="/trombinoscope">
-        <span>Trombinoscope</span>
-        <v-icon>mdi-image</v-icon>
+        <span>Annuaire</span>
+        <v-icon>mdi-account</v-icon>
       </v-btn>
     </v-bottom-navigation>
     <v-app-bar fixed app :style="isJauneActive ? jauneStyle : ''">
-      <v-img @click="clickOnTitle"
+      <v-img
         :src="'img/logo/' + logo"
         alt="overbookd"
         class="logo"
@@ -26,6 +26,7 @@
         contain="true"
         align-center
         center
+        @click="clickOnTitle"
       ></v-img>
       <v-spacer />
       <v-app-bar-nav-icon>

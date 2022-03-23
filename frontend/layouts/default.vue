@@ -22,8 +22,8 @@
         alt="overbookd"
         class="logo"
         max-height="400"
-        max-width="300"
-        contain
+        max-width="200"
+        contain = "true"
         align-center
         center
       ></v-img>
@@ -58,6 +58,7 @@ export default {
       isJauneActive: false,
       jauneStyle: 'background-color: #FFD13C; color: #003C71',
       isDialogOpen: false,
+      zoomEnabled: false,
       version,
 
       file: undefined,

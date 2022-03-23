@@ -90,3 +90,7 @@ sw.*
 *.swp
 
 .vscode
+
+# Capacitor generation
+ios
+android

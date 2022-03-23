@@ -23,7 +23,7 @@
         class="logo"
         max-height="400"
         max-width="200"
-        contain = "true"
+        contain="true"
         align-center
         center
       ></v-img>
@@ -60,7 +60,6 @@ export default {
       isDialogOpen: false,
       zoomEnabled: false,
       version,
-
       file: undefined,
       stepDetail: undefined,
     }

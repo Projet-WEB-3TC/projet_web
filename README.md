@@ -5,7 +5,6 @@ Projet WEB 3TC pour les [24h de l'INSA](https://www.24heures.org/) par : <br/>
  - Yasser Issam
  - Alex Devauchelle
  - Tristan Devin
- - Rocco Salvatori
  - Antoine Piron
 
 ## Objectif du projet

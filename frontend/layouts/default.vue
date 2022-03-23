@@ -22,8 +22,8 @@
         alt="overbookd"
         class="logo"
         max-height="400"
-        max-width="300"
-        contain
+        max-width="200"
+        contain = "true"
         align-center
         center
       ></v-img>

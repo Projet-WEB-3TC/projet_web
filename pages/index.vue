@@ -4,8 +4,11 @@
       <img src="/v.png" alt="Vuetify.js" class="mb-5" />
       <v-row justify="center" align="center">
         <v-col cols="12" sm="8" md="6">
-          <v-btn elevation="2" v-on:click="scheduleNotfication()"
+          <v-btn elevation="2" v-on:click="scheduleNotification()"
             >Send Notification</v-btn
+          >
+          <v-btn elevation="2" v-on:click="updateNotification()"
+            >Update Notification</v-btn
           >
         </v-col>
 
@@ -38,13 +41,15 @@ export default {
       headers: [
         { text: 'Titre', value: 'title' },
         { text: 'Corps', value: 'body' },
+        { text: 'Id', value: 'id' },
         { text: 'Date', value: 'date' },
       ],
+      id_notif: 1,
     }
   },
 
   methods: {
-    scheduleNotfication() {
+    scheduleNotification() {
       if (LocalNotifications.checkPermissions() === 'denied') {
         LocalNotifications.requestPermissions()
       }
@@ -54,7 +59,7 @@ export default {
             {
               title: 'New Notif',
               body: "i'm the body",
-              id: 1,
+              id: this.id_notif,
               schedule: { at: new Date(Date.now() + 1000 * 5) },
               sound: null,
               attachments: null,
@@ -63,15 +68,28 @@ export default {
             },
           ],
         })
+        this.id_notif++
       }
-      this.notificationsPending.push({
-        title: 'New Notif',
-        body: "i'm the body",
-        date:
-          new Date(Date.now() + 1000 * 5).toLocaleDateString('fr') +
-          ' ' +
-          new Date(Date.now() + 1000 * 5).toLocaleTimeString('fr'),
-      })
+    },
+
+    async updateNotification() {
+      const notif = (await LocalNotifications.getPending()).notifications
+      for (let index = 0; index < notif.length; index++) {
+        if (
+          this.notificationsPending.filter((e) => e.id === notif[index].id)
+            .length === 0
+        ) {
+          this.notificationsPending.push({
+            title: notif[index].title,
+            body: notif[index].body,
+            id: notif[index].id,
+            date:
+              new Date(notif[index].schedule.at).toLocaleDateString('fr') +
+              ' ' +
+              new Date(notif[index].schedule.at).toLocaleTimeString('fr'),
+          })
+        }
+      }
     },
   },
 }

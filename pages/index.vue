@@ -4,10 +4,10 @@
       <img src="/v.png" alt="Vuetify.js" class="mb-5" />
       <v-row justify="center" align="center">
         <v-col cols="12" sm="8" md="6">
-          <v-btn elevation="2" v-on:click="scheduleNotification()"
+          <v-btn elevation="2" @click="scheduleNotification()"
             >Send Notification</v-btn
           >
-          <v-btn elevation="2" v-on:click="updateNotification()"
+          <v-btn elevation="2" @click="updateNotification()"
             >Update Notification</v-btn
           >
         </v-col>
@@ -128,17 +128,6 @@ export default {
           })
         }
       }
-    },
-
-    deleteNotif(notif) {
-      const filtered = this.notificationsPending.filter(function (
-        value,
-        index,
-        arr
-      ) {
-        return value.id === notif.id
-      })
-      this.notificationsPending = filtered
     },
 
     showDeleteDialog(item) {

@@ -14,14 +14,36 @@
 
         <v-col md="10">
           <v-data-table
+            v-model="selected"
             style="max-height: 100%; overflow-y: auto"
             :headers="headers"
             :items="notificationsPending"
+            item-key="id"
             class="elevation-1"
-            dense
-            :items-per-page="20"
           >
+            <template #[`item.action`]="{ item }">
+              <div class="text-truncate">
+                <v-icon small @click="showDeleteDialog(item)">
+                  mdi-delete
+                </v-icon>
+              </div>
+            </template>
           </v-data-table>
+
+          <v-dialog v-model="dialogDelete" max-width="500px">
+            <v-card>
+              <v-card-title>Delete</v-card-title>
+              <v-card-text
+                >Etes vous sur de vouloir spprimer la notif?</v-card-text
+              >
+              <v-card-actions>
+                <v-btn color="primary" text @click="dialogDelete = false"
+                  >Close</v-btn
+                >
+                <v-btn color="primary" text @click="deleteItem()">Delete</v-btn>
+              </v-card-actions>
+            </v-card>
+          </v-dialog>
         </v-col>
       </v-row>
     </v-col>
@@ -36,15 +58,29 @@ export default {
 
   data() {
     return {
+      itemToDelete: null,
+      dialogDelete: false,
+      selected: [],
       users: [],
-      notificationsPending: [],
+      notificationsPending: [
+        {
+          title: 'New Notif',
+          body: "i'm the body",
+          id: 1,
+          schedule: { at: new Date(Date.now() + 1000 * 5) },
+          sound: null,
+          attachments: null,
+          actionTypeId: '',
+          extra: null,
+        },
+      ],
       headers: [
         { text: 'Titre', value: 'title' },
         { text: 'Corps', value: 'body' },
         { text: 'Id', value: 'id' },
         { text: 'Date', value: 'date' },
+        { text: 'Delete', value: 'action', sortable: false },
       ],
-      id_notif: 1,
     }
   },
 
@@ -54,13 +90,16 @@ export default {
         LocalNotifications.requestPermissions()
       }
       if (LocalNotifications.checkPermissions() !== 'denied') {
+        const now = new Date(Date.now() + 1000 * 5)
+        const idd = now.valueOf()
+
         LocalNotifications.schedule({
           notifications: [
             {
               title: 'New Notif',
               body: "i'm the body",
-              id: this.id_notif,
-              schedule: { at: new Date(Date.now() + 1000 * 5) },
+              id: idd,
+              schedule: { at: now },
               sound: null,
               attachments: null,
               actionTypeId: '',
@@ -68,7 +107,6 @@ export default {
             },
           ],
         })
-        this.id_notif++
       }
     },
 
@@ -90,6 +128,27 @@ export default {
           })
         }
       }
+    },
+
+    deleteNotif(notif) {
+      const filtered = this.notificationsPending.filter(function (
+        value,
+        index,
+        arr
+      ) {
+        return value.id === notif.id
+      })
+      this.notificationsPending = filtered
+    },
+
+    showDeleteDialog(item) {
+      this.itemToDelete = item
+      this.dialogDelete = !this.dialogDelete
+    },
+    deleteItem() {
+      const index = this.notificationsPending.indexOf(this.itemToDelete)
+      this.notificationsPending.splice(index, 1)
+      this.dialogDelete = false
     },
   },
 }

@@ -15,6 +15,12 @@
         <span>Trombinoscope</span>
         <v-icon>mdi-image</v-icon>
       </v-btn>
+
+       <v-btn value="Notif" to="/notif">
+        <span>Notification</span>
+        <v-icon>mdi-bell</v-icon>
+      </v-btn>
+
     </v-bottom-navigation>
     <v-app-bar fixed app :style="isJauneActive ? jauneStyle : ''">
       <v-img @click="clickOnTitle"

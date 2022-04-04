@@ -33,6 +33,10 @@ export default {
       title,
     }
   },
+  mounted() {
+    // eslint-disable-next-line no-console
+    console.log(this.error)
+  },
 }
 </script>
 

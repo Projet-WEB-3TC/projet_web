@@ -6,6 +6,7 @@ Projet WEB 3TC pour les [24h de l'INSA](https://www.24heures.org/) par : <br/>
  - Alex Devauchelle
  - Tristan Devin
  - Antoine Piron
+ - Rocco Salvatori
 
 ## Objectif du projet
 Développer une version mobile de l'outil de gestion du festival : _*Overbookd*_. <br/>

@@ -1,68 +1,127 @@
-# pweb
+# Overbookd
+## Getting started
 
-## Build Setup
+To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+
+Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+
+## Add your files
+
+- [ ] [Create](https://gitlab.com/-/experiment/new_project_readme_content:c970d55261bf54a7e9a01ecee9dc6cee?https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://gitlab.com/-/experiment/new_project_readme_content:c970d55261bf54a7e9a01ecee9dc6cee?https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
+- [ ] [Add files using the command line](https://gitlab.com/-/experiment/new_project_readme_content:c970d55261bf54a7e9a01ecee9dc6cee?https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
 
 ```bash
-# install dependencies
-$ npm install
-
-# serve with hot reload at localhost:3000
-$ npm run dev
-
-# build for production and launch server
-$ npm run build
-$ npm run start
-
-# generate static project
-$ npm run generate
+cd existing_repo
+git remote add origin https://gitlab.com/24-heures-insa/overbookd-mono.git
+git branch -M main
+git push -uf origin main
 ```
 
-For detailed explanation on how things work, check out the [documentation](https://nuxtjs.org).
+## Integrate with your tools
 
-## Special Directories
+- [ ] [Set up project integrations](https://gitlab.com/-/experiment/new_project_readme_content:c970d55261bf54a7e9a01ecee9dc6cee?https://gitlab.com/24-heures-insa/overbookd-mono/-/settings/integrations)
 
-You can create the following extra directories, some of which have special behaviors. Only `pages` is required; you can delete them if you don't want to use their functionality.
+## Collaborate with your team
 
-### `assets`
+- [ ] [Invite team members and collaborators](https://gitlab.com/-/experiment/new_project_readme_content:c970d55261bf54a7e9a01ecee9dc6cee?https://docs.gitlab.com/ee/user/project/members/)
+- [ ] [Create a new merge request](https://gitlab.com/-/experiment/new_project_readme_content:c970d55261bf54a7e9a01ecee9dc6cee?https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
+- [ ] [Automatically close issues from merge requests](https://gitlab.com/-/experiment/new_project_readme_content:c970d55261bf54a7e9a01ecee9dc6cee?https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
+- [ ] [Enable merge request approvals](https://gitlab.com/-/experiment/new_project_readme_content:c970d55261bf54a7e9a01ecee9dc6cee?https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
+- [ ] [Automatically merge when pipeline succeeds](https://gitlab.com/-/experiment/new_project_readme_content:c970d55261bf54a7e9a01ecee9dc6cee?https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
 
-The assets directory contains your uncompiled assets such as Stylus or Sass files, images, or fonts.
+## Test and Deploy
 
-More information about the usage of this directory in [the documentation](https://nuxtjs.org/docs/2.x/directory-structure/assets).
+Use the built-in continuous integration in GitLab.
 
-### `components`
+- [ ] [Get started with GitLab CI/CD](https://gitlab.com/-/experiment/new_project_readme_content:c970d55261bf54a7e9a01ecee9dc6cee?https://docs.gitlab.com/ee/ci/quick_start/index.html)
+- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing(SAST)](https://gitlab.com/-/experiment/new_project_readme_content:c970d55261bf54a7e9a01ecee9dc6cee?https://docs.gitlab.com/ee/user/application_security/sast/)
+- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://gitlab.com/-/experiment/new_project_readme_content:c970d55261bf54a7e9a01ecee9dc6cee?https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
+- [ ] [Use pull-based deployments for improved Kubernetes management](https://gitlab.com/-/experiment/new_project_readme_content:c970d55261bf54a7e9a01ecee9dc6cee?https://docs.gitlab.com/ee/user/clusters/agent/)
+- [ ] [Set up protected environments](https://gitlab.com/-/experiment/new_project_readme_content:c970d55261bf54a7e9a01ecee9dc6cee?https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
 
-The components directory contains your Vue.js components. Components make up the different parts of your page and can be reused and imported into your pages, layouts and even other components.
+***
 
-More information about the usage of this directory in [the documentation](https://nuxtjs.org/docs/2.x/directory-structure/components).
+## Editing this README
 
-### `layouts`
+When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!).  Thank you to [makeareadme.com](https://gitlab.com/-/experiment/new_project_readme_content:c970d55261bf54a7e9a01ecee9dc6cee?https://www.makeareadme.com/) for this template.
 
-Layouts are a great help when you want to change the look and feel of your Nuxt app, whether you want to include a sidebar or have distinct layouts for mobile and desktop.
+## Suggestions for a good README
 
-More information about the usage of this directory in [the documentation](https://nuxtjs.org/docs/2.x/directory-structure/layouts).
+Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
 
-### `pages`
+## Name
 
-This directory contains your application views and routes. Nuxt will read all the `*.vue` files inside this directory and setup Vue Router automatically.
+Choose a self-explaining name for your project.
 
-More information about the usage of this directory in [the documentation](https://nuxtjs.org/docs/2.x/get-started/routing).
+## Description
 
-### `plugins`
+Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
 
-The plugins directory contains JavaScript plugins that you want to run before instantiating the root Vue.js Application. This is the place to add Vue plugins and to inject functions or constants. Every time you need to use `Vue.use()`, you should create a file in `plugins/` and add its path to plugins in `nuxt.config.js`.
+## Badges
 
-More information about the usage of this directory in [the documentation](https://nuxtjs.org/docs/2.x/directory-structure/plugins).
+On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
 
-### `static`
+## Visuals
 
-This directory contains your static files. Each file inside this directory is mapped to `/`.
+Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
 
-Example: `/static/robots.txt` is mapped as `/robots.txt`.
+## Installation
 
-More information about the usage of this directory in [the documentation](https://nuxtjs.org/docs/2.x/directory-structure/static).
+Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
 
-### `store`
+## Usage
 
-This directory contains your Vuex store files. Creating a file in this directory automatically activates Vuex.
+Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
 
-More information about the usage of this directory in [the documentation](https://nuxtjs.org/docs/2.x/directory-structure/store).
+## Support
+
+Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+
+## Roadmap
+
+If you have ideas for releases in the future, it is a good idea to list them in the README.
+
+## Contributing
+
+State if you are open to contributions and what your requirements are for accepting them.
+
+For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+
+You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+
+## Authors and acknowledgment
+
+Show your appreciation to those who have contributed to the project.
+
+## License
+
+For open source projects, say how it is licensed.
+
+## Project status
+
+If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+
+## Backups
+
+### Setup
+
+Install rsync if not installed :
+
+```bash
+sudo apt install rsync
+```
+
+### Info
+
+This script create backups of prod and pre-prod in tar.gz archive.  
+You need to specify in ``backups.sh`` script the path for Overbookd.  
+The archive format title is ``overbookd_AAAA-MM-DD_HH-MM-SS.tar.gz`` and all backups for more 14 days are deleted.  
+The script have also a rsync save on another device. To get data in your, at this line of the script, change the destination.
+Add a sshkey to work without password promt
+
+```bash
+# Sync file with NAS
+rsync ${OVERBOOKD_MANAGEMENT_PATH}/overbookd_${DATE}.tar.gz [your device]
+```
+
+To finish add in a cron task for running all x days

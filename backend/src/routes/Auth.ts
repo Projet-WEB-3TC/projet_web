@@ -27,13 +27,13 @@ export const signup: RequestHandler = async function (req, res) {
   try {
     let user = await UserModel.findOne({ email: userInput.email });
     if (user) {
-      return res.status(400).json({
+      return res.status(401).json({
         msg: "User already exists",
       });
     }
 
     if (userInput.password != userInput.password2) {
-      return res.status(400).json({
+      return res.status(402).json({
         msg: "Passwords mismatch",
       });
     }
@@ -44,7 +44,7 @@ export const signup: RequestHandler = async function (req, res) {
     delete userInput.password2; // DO NOT SAVE INTO DB
 
     user = await UserModel.create(userInput);
-
+/*
     jwt.sign(
       { userID: user._id },
       "randomString",
@@ -57,7 +57,7 @@ export const signup: RequestHandler = async function (req, res) {
           token,
         });
       }
-    );
+    );*/
     //send validation mail
     const email = req.body.email;
     await sendValidationMail(email);

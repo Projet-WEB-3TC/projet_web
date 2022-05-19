@@ -57,8 +57,8 @@ export default {
           // type: 'Bearer'
         },
         endpoints: {
-          login: { url: "/login", method: "post" },
-          logout: { url: "/logout", method: "post" },
+          login: { url: "https://overbookd.traefik.me/api/login", method: "post" },
+          logout: { url: "https://overbookd.traefik.me/api/logout", method: "post" },
           // user: { url: "/user", method: "get" },
           user: false,
         },

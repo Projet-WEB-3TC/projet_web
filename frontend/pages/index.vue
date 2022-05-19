@@ -19,7 +19,7 @@
           <v-btn value="Signup" to="/signup" color="success">
             S'inscrire
           </v-btn>
-          <v-btn color="info" @click="login"> Se connecter </v-btn>
+          <v-btn color="info" @click="login()"> Se connecter </v-btn>
         </v-card-actions>
       </v-card>
     </v-content>
@@ -40,7 +40,8 @@ export default {
   methods: {
     async login() {
       try {
-        await this.$auth.loginWith("local", { data: this.credentials }); // try to log user in
+        console.log(this.credentials.body);
+        // this.$axios.post("/login", this.credentials); // try to log user in
         console.log("connected to API");
         await this.$router.push({
           path: "/Acceuil",

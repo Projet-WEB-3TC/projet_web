@@ -73,17 +73,7 @@ export default {
           this.compiledForm.team = ["toValidate"];
         }
         console.log(this.compiledForm);
-        this.$axios
-          .post("/signup", this.compiledForm)
-          .then(function (response) {
-            console.log("done");
-            console.log(response.status);
-            console.log(response);
-          })
-          .catch(function (error) {
-            console.log("ERROR");
-            console.log(error);
-          });
+        this.$axios.post("/signup", this.compiledForm);
         this.$router.push({
           path: "/",
         });

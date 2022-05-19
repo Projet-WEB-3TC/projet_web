@@ -9,7 +9,7 @@
     <p>
       Une fois le formulaire remplit veuillez vous connecter à Overbookd pour
       remplir vos dispos ! <br />
-      <span class="important"
+      <span
         >Pensez à immédiatement les remplir pour être accepté au plus vite
         !</span
       >
@@ -19,8 +19,8 @@
 </template>
 
 <script>
-import { getConfig } from "~/common/role";
 import OverForm from "../components/overForm";
+import { getConfig } from "~/common/role";
 
 export default {
   name: "Signup",
@@ -67,14 +67,25 @@ export default {
           this.compiledForm.team = this.compiledForm.team
             .toLocaleString()
             .toLowerCase()
-            .split(","); //Pour passer tout les labels en minuscule
+            .split(","); // Pour passer tout les labels en minuscule
           this.compiledForm.team.push("toValidate");
         } else {
           this.compiledForm.team = ["toValidate"];
         }
-        this.$axios.post("/signup", this.compiledForm);
+        console.log(this.compiledForm);
+        this.$axios
+          .post("/signup", this.compiledForm)
+          .then(function (response) {
+            console.log("done");
+            console.log(response.status);
+            console.log(response);
+          })
+          .catch(function (error) {
+            console.log("ERROR");
+            console.log(error);
+          });
         this.$router.push({
-          path: "/login",
+          path: "/",
         });
         alert(
           `Inscription terminée, veuillez maintenant vous connecter pour remplir IMMEDIATEMENT vos disponibilités. C'est absolument essentiel et va vous permettre d'être validé.`

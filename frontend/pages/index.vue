@@ -16,8 +16,12 @@
 
         <v-divider />
         <v-card-actions>
-          <v-btn color="success"> S'inscrire </v-btn>
-          <v-btn value="Accueil" to="/acceuil" color="info"> Se connecter </v-btn>
+          <v-btn value="Signup" to="/signup" color="success">
+            S'inscrire
+          </v-btn>
+          <v-btn value="Accueil" to="/acceuil" color="info">
+            Se connecter
+          </v-btn>
         </v-card-actions>
       </v-card>
     </v-content>
@@ -25,7 +29,7 @@
 </template>
 <script>
 export default {
-    layout : "empty",
+  layout: "empty",
 
   data() {
     return {

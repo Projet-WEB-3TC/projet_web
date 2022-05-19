@@ -79,7 +79,7 @@ export const login: RequestHandler = async function (req, res) {
 
     if (!user.password) {
       logger.info(`user not migrated ${user._id}`);
-      return res.status(400).json({
+      return res.status(401).json({
         msg: "User not migrated dude",
       });
     }
@@ -87,12 +87,12 @@ export const login: RequestHandler = async function (req, res) {
     const isMatch = await bcrypt.compare(userInput.password, user.password);
 
     if (!isMatch) {
-      return res.status(400).json({
+      return res.status(402).json({
         msg: "Incorrect password !",
       });
     }
     logger.info(`user connected ${userInput.username}`);
-
+/*
     jwt.sign(
       { userID: user._id },
       "randomString",
@@ -105,7 +105,7 @@ export const login: RequestHandler = async function (req, res) {
           token,
         });
       }
-    );
+    );*/
   } catch (error) {
     logger.err(error);
     res.status(500).json({

@@ -4,9 +4,26 @@
       <v-card width="500" class="mx-auto mt-9" align="center">
         <v-card-title>Bienvenue sur Overbookd Companion!</v-card-title>
         <v-card-text>
-          <v-text-field label="Username" prepend-icon="mdi-account-circle" />
           <v-text-field
-            label="Password"
+            prepend-icon="mdi-account-circle"
+            v-model="credentials.username"
+            label="email"
+            type="text"
+            required
+            autofocus
+            outlined
+            solo
+            filled
+          />
+          <v-text-field
+            v-model="credentials.password"
+            label="password"
+            required
+            outlined
+            clearable
+            solo
+            filled
+            @keydown.enter="login()"
             :type="showPassword ? 'text' : 'password'"
             prepend-icon="mdi-lock"
             :append-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"

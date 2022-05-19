@@ -7,7 +7,6 @@ import { FA } from "~/utils/models/FA";
 import Fuse from "fuse.js";
 import { TimeSpan } from "~/utils/models/TimeSpan";
 import TimeSpanRepo from "~/repositories/timeSpanRepo";
-import user from "~/middleware/user";
 
 declare interface filter {
   user: {
@@ -17,15 +16,23 @@ declare interface filter {
       isAscending: boolean;
       field: string;
     };
+    showToValidate: boolean;
   };
   FT: {
     search: string;
+    team: string[];
   };
   isModeOrgaToTache: boolean;
+  bypass: boolean;
+}
+
+declare interface MissingRolesOnFts {
+  [FTID: string]: string[];
 }
 
 export const state = () => ({
   users: [] as User[],
+  selectedUserIndex: Number,
   filters: {
     user: {
       search: "",
@@ -34,25 +41,43 @@ export const state = () => ({
         isAscending: false,
         field: "charisma",
       },
+      showToValidate: false,
+      driverLicense: undefined,
     },
     FT: {
       search: "",
+      team: [] as string[],
+      areAssignedFTsDisplayed: true,
     },
     isModeOrgaToTache: false,
+    bypass: false,
   } as filter,
-  selectedUser: {} as User,
+  selectedUser: {} as User, // selected User from the list
   selectedTimeSpan: {} as TimeSpan, // Selected TimeSpan from the calendar
   FTs: [] as FT[],
   FAs: [] as FA[],
   timeslots: [] as any[],
   timespans: [] as TimeSpan[],
   assignedTimespans: [] as TimeSpan[],
+  hoverTask: {} as TimeSpan,
+  multipleSolidTask: [] as TimeSpan[],
   timespanToFTName: {} as { [key: string]: string },
+  missingRolesOnFTs: {} as MissingRolesOnFts,
+  userAssignedToSameTimespan: [] as {
+    _id: string;
+    firstname: string;
+    lastname: string;
+    timespanId: string;
+  }[],
+  waitingForResponse: false,
 });
 
 export const mutations = mutationTree(state, {
   SET_USERS(state: any, data: User[]) {
     state.users = data;
+  },
+  SET_USER_INDEX(state: any, index: number) {
+    state.selectedUserIndex = index;
   },
   SET_TIMESLOTS(state: any, data: any[]) {
     state.timeslots = data;
@@ -69,8 +94,20 @@ export const mutations = mutationTree(state, {
   SET_USER_FILTER(state: any, { key, value }) {
     state.filters.user[key] = value;
   },
+  SET_FT_FILTER(state: any, { key, value }) {
+    state.filters.FT[key] = value;
+  },
+  ADD_TEAM_TO_FT_FILTER(state: any, team: string) {
+    state.filters.FT.team.push(team);
+  },
+  REMOVE_TEAM_FROM_FT_FILTER(state: any, team: string) {
+    state.filters.FT.team.splice(state.filters.FT.team.indexOf(team), 1);
+  },
   SET_TIMESPANS(state: any, data: any) {
     state.timespans = data;
+  },
+  SET_ROLES(state: any, data: MissingRolesOnFts) {
+    state.missingRolesOnFTs = data;
   },
   SET_ASSIGN_TIMESPANS(state: any, data: any) {
     state.assignedTimespans = data;
@@ -105,6 +142,48 @@ export const mutations = mutationTree(state, {
   },
   CHANGE_MODE(state: any, data: boolean) {
     state.filters.isModeOrgaToTache = data;
+    state.selectedUser = {};
+  },
+  SET_HOVER_TASK(state: any, data: TimeSpan) {
+    state.hoverTask = data;
+  },
+  SET_MULTIPLE_SOLID_TASK(state: any, data: TimeSpan[]) {
+    state.multipleSolidTask = data;
+  },
+  SET_USER_ASSIGNED_TO_SAME_TIMESPAN(
+    state: any,
+    data: { _id: string; user: Pick<User, "lastname" | "firstname" | "_id"> }[]
+  ) {
+    state.userAssignedToSameTimespan = data.map((userWithTimespan) => ({
+      timespanId: userWithTimespan._id,
+      firstname: userWithTimespan.user.firstname,
+      lastname: userWithTimespan.user.lastname,
+      _id: userWithTimespan.user._id,
+    }));
+    state.userAssignedToSameTimespan.sort((a: any, b: any) => {
+      if (a.firstname < b.firstname) {
+        return -1;
+      }
+      if (a.firstname > b.firstname) {
+        return 1;
+      }
+      return 0;
+    });
+  },
+  DELETE_TIMESPAN(state: any, data: TimeSpan) {
+    const timeSpanIndex = state.timespans.findIndex(
+      (ts: TimeSpan) => ts._id === data._id
+    );
+    state.timespans.splice(timeSpanIndex, 1);
+  },
+  TOGGLE_BYPASS(state: any) {
+    state.filters.bypass = !state.filters.bypass;
+  },
+  TOGGLE_SHOW_TO_VALIDATE(state: any) {
+    state.filters.user.showToValidate = !state.filters.user.showToValidate;
+  },
+  SET_WAITING_FOR_RESPONSE: function (state, isWaiting) {
+    state.waitingForResponse = isWaiting;
   },
 });
 
@@ -117,7 +196,10 @@ export const actions = actionTree(
      * @returns
      */
     async getUsers({ commit }: any) {
-      const ret = await safeCall(this, RepoFactory.userRepo.getAllUsers(this));
+      const ret: any = await safeCall(
+        this,
+        RepoFactory.userRepo.getAllUsers(this)
+      );
       if (ret) {
         let users = ret.data as User[];
         // filter useless users
@@ -132,7 +214,7 @@ export const actions = actionTree(
      * @returns
      */
     async getFTs({ commit }: any) {
-      const ret = await safeCall(this, RepoFactory.ftRepo.getAllFTs(this));
+      const ret: any = await safeCall(this, RepoFactory.ftRepo.getAllFTs(this));
       if (ret) {
         commit("SET_FTs", ret.data.data);
       }
@@ -144,7 +226,7 @@ export const actions = actionTree(
      * @returns
      */
     async getFAs({ commit }: any) {
-      const ret = await safeCall(this, RepoFactory.faRepo.getAllFAs(this));
+      const ret: any = await safeCall(this, RepoFactory.faRepo.getAllFAs(this));
       if (ret) {
         commit("SET_FAs", ret.data);
       }
@@ -157,13 +239,17 @@ export const actions = actionTree(
 
     changeMode({ commit }: any, isModeOrgaToTache: boolean) {
       commit("CHANGE_MODE", isModeOrgaToTache || false);
+      commit("SET_MULTIPLE_SOLID_TASK", []);
+      commit("SET_ASSIGN_TIMESPANS", []);
+      commit("SET_SELECTED_USER", {});
+      commit("SET_USER_INDEX", -1);
     },
 
     /**
      * get all timespans
      */
     async getTimespans({ commit, state }: any) {
-      const ret = await safeCall(this, TimeSpanRepo.getAll(this));
+      const ret: any = await safeCall(this, TimeSpanRepo.getAll(this));
       if (ret) {
         commit(
           "SET_TIMESPANS",
@@ -180,45 +266,51 @@ export const actions = actionTree(
       return ret;
     },
     async getUserAssignedTimespans({ commit, state }: any, user: User) {
-      const ret = await safeCall(
-        this,
-        TimeSpanRepo.getUserAssignedTimespans(this, user._id)
-      );
-      if (ret) {
-        commit(
-          "SET_ASSIGN_TIMESPANS",
-          ret.data.map((ts: any) => ({
-            ...ts,
-            start: new Date(ts.start),
-            end: new Date(ts.end),
-            timed: true,
-            FTName: state.FTs.find((ft: FT) => ft.count === ts.FTID)?.general
-              .name,
-          }))
+      if (user) {
+        const ret: any = await safeCall(
+          this,
+          TimeSpanRepo.getUserAssignedTimespans(this, user._id)
         );
+        if (ret) {
+          commit(
+            "SET_ASSIGN_TIMESPANS",
+            ret.data.map((ts: any) => ({
+              ...ts,
+              start: new Date(ts.start),
+              end: new Date(ts.end),
+              timed: true,
+              FTName: state.FTs.find((ft: FT) => ft.count === ts.FTID)?.general
+                .name,
+            }))
+          );
+        }
+        return ret;
+      } else {
+        commit("SET_ASSIGN_TIMESPANS", []);
       }
-      return ret;
     },
 
     async getAvailableTimespansForUser({ commit, state }: any, user: User) {
-      const ret = await safeCall(
-        this,
-        TimeSpanRepo.getAvailableTimespansForUser(this, user._id)
-      );
-      if (ret) {
-        commit(
-          "SET_TIMESPANS",
-          ret.data.map((ts: any) => ({
-            ...ts,
-            start: new Date(ts.start),
-            end: new Date(ts.end),
-            timed: true,
-            FTName: state.FTs.find((ft: FT) => ft.count === ts.FTID)?.general
-              .name,
-          }))
+      if (user) {
+        const ret: any = await safeCall(
+          this,
+          TimeSpanRepo.getAvailableTimespansForUser(this, user._id)
         );
+        if (ret) {
+          commit(
+            "SET_TIMESPANS",
+            ret.data.map((ts: any) => ({
+              ...ts,
+              start: new Date(ts.start),
+              end: new Date(ts.end),
+              timed: true,
+              FTName: state.FTs.find((ft: FT) => ft.count === ts.FTID)?.general
+                .name,
+            }))
+          );
+        }
+        return ret;
       }
-      return ret;
     },
 
     /**
@@ -227,19 +319,41 @@ export const actions = actionTree(
      * @returns
      */
     async getTimeslots({ commit }: any) {
-      const ret = await safeCall(this, RepoFactory.timeslotRepo.getAll(this));
+      const ret: any = await safeCall(
+        this,
+        RepoFactory.timeslotRepo.getAll(this)
+      );
       if (ret) {
         commit("SET_TIMESLOTS", ret.data);
       }
       return ret;
     },
 
+    async getRolesByFT({ commit }: any) {
+      const ret = await safeCall(this, TimeSpanRepo.getRolesByFT(this));
+      if (ret) {
+        commit("SET_ROLES", ret.data);
+      }
+      return ret;
+    },
+
+    async initMode({ commit }: any) {
+      commit("CHANGE_MODE", true);
+    },
+
     async initStore({ dispatch, state }) {
-      await dispatch("getUsers");
-      await dispatch("getFTs");
-      await dispatch("getFAs");
-      await dispatch("getTimeslots");
-      await dispatch("getTimespans");
+      const actions = [
+        dispatch("getUsers"),
+        dispatch("getFTs"),
+        dispatch("getFAs"),
+        dispatch("getTimeslots"),
+        dispatch("getTimespans"),
+      ];
+      if (!state.filters.isModeOrgaToTache) {
+        return Promise.all([...actions, dispatch("getRolesByFT")]);
+      }
+
+      return Promise.all(actions);
     },
 
     /**
@@ -256,13 +370,43 @@ export const actions = actionTree(
       commit("SET_USER_FILTER", data);
     },
 
+    setUserIndex({ commit }: any, index: number) {
+      commit("SET_USER_INDEX", index);
+    },
+
     /**
      * set selected User
      */
     setSelectedUser({ commit }: any, user: User) {
-      commit("SET_SELECTED_USER", user);
+      if (user) {
+        commit("SET_SELECTED_USER", user);
+      } else {
+        commit("SET_SELECTED_USER", {});
+      }
     },
 
+    setSelectedUserBasedOnId({ state, dispatch }: any, id: string) {
+      const selectedUser = state.users.find((u: User) => u._id === id);
+      if (!selectedUser) {
+        throw new Error(`User ${id} not found in local users`);
+      }
+      dispatch("setUserIndex", id);
+      dispatch("setSelectedUser", selectedUser);
+    },
+
+    async setFTTeamFilter({ commit, state }: any, data: string) {
+      if (state.filters.FT.team.includes(data)) {
+        commit("REMOVE_TEAM_FROM_FT_FILTER", data);
+      } else {
+        commit("ADD_TEAM_TO_FT_FILTER", data);
+      }
+    },
+    async removeFTTeamFilter({ commit }: any, data: string) {
+      commit("REMOVE_TEAM_FROM_FT_FILTER", data);
+    },
+    async setFTFilter({ commit }: any, data: { key: string; value: string }) {
+      commit("SET_FT_FILTER", data);
+    },
     getFTNameById({ state }: any, id: string) {
       const ft = state.FTs.find((ft: FT) => {
         if (ft.timeframes.length > 0) {
@@ -285,7 +429,7 @@ export const actions = actionTree(
       { commit, state }: any,
       data: { userID: string; timespanID: string }
     ) {
-      const res = await safeCall(
+      const res: any = await safeCall(
         this,
         TimeSpanRepo.assignUserToTimespan(this, data.userID, data.timespanID)
       );
@@ -294,9 +438,14 @@ export const actions = actionTree(
           ...state.timespans.find((ts: TimeSpan) => ts._id === res.data._id),
         };
         assignedTimeSpan.assigned = res.data.assigned;
+        assignedTimeSpan.color = "primary";
         commit("ADD_ASSIGNED_TIMESPAN", assignedTimeSpan);
         commit("REMOVE_AVAILAIBLE_TIMESPAN", assignedTimeSpan);
+        if (!state.filters.isModeOrgaToTache) {
+          commit("SET_USER_INDEX", -1);
+        }
       }
+      return res;
     },
 
     /**
@@ -318,6 +467,98 @@ export const actions = actionTree(
         commit("REMOVE_ASSIGNED_TIMESPAN", assignedTimeSpan);
       }
     },
+
+    setHoverTask({ commit }: any, timeSpan: TimeSpan) {
+      commit("SET_HOVER_TASK", timeSpan);
+    },
+
+    async setMultipleSolidTask({ commit, state }: any, ft: FT) {
+      if (ft !== undefined) {
+        const ftTimespans = await TimeSpanRepo.getTimeSpanByFTID(
+          this,
+          ft.count.toString()
+        );
+        const timespanCompletion =
+          await TimeSpanRepo.getTotalNumberOfTimespansAndAssignedTimespansByFTID(
+            this,
+            ft.count.toString()
+          );
+        if (ftTimespans && timespanCompletion) {
+          const tosend = ftTimespans.data.map((ts: any) => ({
+            ...ts,
+            start: new Date(ts.start),
+            end: new Date(ts.end),
+            timed: true,
+            FTName: getFTName(
+              [...state.timespans, ...state.assignedTimespans],
+              ts,
+              timespanCompletion.data,
+              ft.general?.name || ""
+            ),
+            completion: getFTCompletion(
+              [...state.timespans, ...state.assignedTimespans],
+              ts,
+              timespanCompletion.data,
+              ft.general?.name || ""
+            ),
+          }));
+          //sort tosend by start date
+          tosend.sort((a: any, b: any) => {
+            return a.start.getTime() - b.start.getTime();
+          });
+          commit("SET_MULTIPLE_SOLID_TASK", tosend);
+        }
+      }
+    },
+
+    async filterAvailableUserForTimeSpan(
+      { commit, state }: any,
+      timeSpan: TimeSpan
+    ) {
+      const usersData = await safeCall(
+        this,
+        TimeSpanRepo.getAvailableUserForTimeSpan(
+          this,
+          timeSpan._id,
+          state.filters.bypass
+        )
+      );
+      if (usersData) {
+        commit("SET_USERS", usersData.data);
+      }
+    },
+
+    //get user assigned to same timespan
+    async getUserAssignedToSameTimespan({ commit }: any, timeSpan: TimeSpan) {
+      commit("SET_WAITING_FOR_RESPONSE", true);
+      const res = await safeCall(
+        this,
+        TimeSpanRepo.getUserAssignedToSameTimespan(this, timeSpan._id)
+      );
+      if (res) {
+        commit("SET_USER_ASSIGNED_TO_SAME_TIMESPAN", res.data);
+      }
+      commit("SET_WAITING_FOR_RESPONSE", false);
+      return res;
+    },
+
+    async deleteTimespan({ commit }: any, timeSpan: TimeSpan) {
+      const res = await safeCall(
+        this,
+        TimeSpanRepo.deleteTimespan(this, timeSpan._id)
+      );
+      if (res) {
+        commit("DELETE_TIMESPAN", timeSpan);
+      }
+      return res;
+    },
+
+    toggleBypass({ commit }: any) {
+      commit("TOGGLE_BYPASS");
+    },
+    toggleShowToValidate({ commit }: any) {
+      commit("TOGGLE_SHOW_TO_VALIDATE");
+    },
   }
 );
 
@@ -331,8 +572,7 @@ export const getters = getterTree(state, {
     if (search && search.length > 0) {
       const options = {
         // Search in `author` and in `tags` array
-        keys: ["firstname", "lastname"],
-        threshold: 0.4,
+        keys: ["firstname", "lastname", "nickname", "phone"],
       };
       const fuse = new Fuse(users, options);
       users = fuse.search(search).map((e) => e.item);
@@ -347,7 +587,7 @@ export const getters = getterTree(state, {
       });
     }
 
-    if (user.sortBy.field) {
+    if (user.sortBy.field && search.length == 0) {
       users = users.sort((a: User, b: User) => {
         // @ts-ignore
         if (a[user.sortBy.field] < b[user.sortBy.field]) {
@@ -360,25 +600,45 @@ export const getters = getterTree(state, {
         return 0;
       });
     }
+
+    if (user.driverLicense) {
+      users = users.filter((user: User) => user.hasDriverLicense);
+    } else if (user.driverLicense === false) {
+      users = users.filter((user: User) => !user.hasDriverLicense);
+    }
     return users;
   },
 
   filteredFTs: (state: any) => {
     // filter FTs by filters and search
-    const { FT } = state.filters;
-    const { search } = FT;
-    let FTs = state.FTs;
-
-    if (search && search.length > 0) {
+    let filtered = state.FTs.filter((item: any) => {
+      if (item.general.name !== "" && item.status === "ready") {
+        return item;
+      }
+    });
+    const FTFilters = state.filters.FT;
+    if (FTFilters.team.length > 0) {
+      filtered = filtered.filter((ft: FT) =>
+        FTFilters.team.any((filteredTeam: string) =>
+          state.missingRolesOnFTs[ft.count]?.includes(filteredTeam)
+        )
+      );
+    }
+    if (FTFilters.search && FTFilters.search.length > 0) {
       const options = {
         // Search in `author` and in `tags` array
-        keys: ["name"],
+        keys: ["general.name", "count"],
+
+        threshold: 0.2,
       };
-      const fuse = new Fuse(FTs, options);
-      FTs = fuse.search(search).map((e) => e.item);
+      const fuse = new Fuse(filtered, options);
+      filtered = fuse.search(FTFilters.search).map((e) => e.item);
+    }
+    if (FTFilters.areAssignedFTsDisplayed) {
+      filtered = filtered.filter((ft: FT) => state.missingRolesOnFTs[ft.count]);
     }
 
-    return FTs;
+    return filtered;
   },
 
   selectedUserAvailabilities: (state: any) => {
@@ -392,62 +652,74 @@ export const getters = getterTree(state, {
     return [];
   },
 
-  availableTimeSpans: (state: any, getters: any) => {
-    // const { selectedUser } = state;
-    // if (selectedUser && state.timespans) {
-    //   console.log(selectedUser);
-    //   console.log(state.timespans);
-    //   let availableTimeSpans = state.timespans.filter((ts: any) => {
-    //     let isAvailable = false;
-    //     getters.selectedUserAvailabilities.forEach((av: any) => {
-    //       if (!av) {
-    //         return;
-    //       }
-    //       if (
-    //         new Date(av.timeFrame.start).getTime() <=
-    //           new Date(ts.start).getTime() &&
-    //         new Date(av.timeFrame.end).getTime() >= new Date(ts.end).getTime()
-    //       ) {
-    //         isAvailable = true;
-    //       }
-    //     });
-    //     return isAvailable;
-    //   });
-    //   availableTimeSpans.filter((ts: any) => {
-    //     const requirement = ts.required;
-    //     if (requirement.type === "user") {
-    //       return requirement.user._id === selectedUser._id;
-    //     } else if (requirement.type === "team") {
-    //       return selectedUser.team.includes(requirement.team);
-    //     }
-    //   });
-    //   // filter only avaialble timespans
-    //   availableTimeSpans = availableTimeSpans.filter(
-    //     (ts: TimeSpan) => !ts.assigned
-    //   );
-    //   return availableTimeSpans;
-    // }
-    // return [];
+  availableTimeSpans: (state: any) => {
+    const FTFilters = state.filters.FT;
+    let filteredTimespans: any = state.timespans;
+    if (FTFilters.team.length > 0) {
+      filteredTimespans = state.timespans.filter((ts: TimeSpan) => {
+        if (ts === null) return false;
+        if (!FTFilters.team.includes(ts.required)) {
+          return false;
+        }
+        return true;
+      });
+    }
 
-    //TODO: filter with future timespans filter
-    return state.timespans;
+    if (FTFilters.search && FTFilters.search.length > 0) {
+      const options = {
+        // Search in `author` and in `tags` array
+        keys: ["FTID", "FTName"],
+
+        threshold: 0.2,
+      };
+      const fuse = new Fuse(filteredTimespans, options);
+      filteredTimespans = fuse.search(FTFilters.search).map((e) => e.item);
+    }
+
+    return filteredTimespans;
   },
+
+  isWaitingForResponse: (state: any) => state.waitingForResponse,
 });
 
-/**
- * resolve FT id with name
- */
-function getFTNameById(FTs: any, id: string) {
-  const ft = FTs.find((ft: FT) => {
-    if (ft.timeframes.length > 0) {
-      let res = false;
-      ft.timeframes.forEach((tf: any) => {
-        if (tf._id === id) {
-          res = true;
-        }
-      });
-      return res;
-    }
+function getFTName(
+  allTimeSpans: TimeSpan[],
+  timespan: TimeSpan,
+  timespanCompletion: { [key: string]: { total: number; assigned: number } },
+  name: string
+) {
+  const ret: any = { assigned: 0, total: 0 };
+  const filter = allTimeSpans.filter(
+    (ts: TimeSpan) =>
+      ts.FTID === timespan.FTID &&
+      ts.start.toString() === new Date(timespan.start).toString() &&
+      ts.end.toString() === new Date(timespan.end).toString() &&
+      ts.required === timespan.required
+  );
+  filter.forEach((ts: TimeSpan) => {
+    ret.assigned += timespanCompletion[ts._id].assigned;
+    ret.total += timespanCompletion[ts._id].total;
   });
-  return ft ? ft.general.name : "";
+  return "[" + ret.assigned + "/" + ret.total + "] " + name;
+}
+
+function getFTCompletion(
+  allTimeSpans: TimeSpan[],
+  timespan: TimeSpan,
+  timespanCompletion: { [key: string]: { total: number; assigned: number } },
+  name: string
+) {
+  const ret: any = { assigned: 0, total: 0 };
+  const filter = allTimeSpans.filter(
+    (ts: TimeSpan) =>
+      ts.FTID === timespan.FTID &&
+      ts.start.toString() === new Date(timespan.start).toString() &&
+      ts.end.toString() === new Date(timespan.end).toString() &&
+      ts.required === timespan.required
+  );
+  filter.forEach((ts: TimeSpan) => {
+    ret.assigned += timespanCompletion[ts._id].assigned;
+    ret.total += timespanCompletion[ts._id].total;
+  });
+  return ret.assigned / ret.total;
 }

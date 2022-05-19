@@ -103,7 +103,7 @@ services:
       context: ../frontend
       dockerfile: Dockerfile.dev
     volumes:
-      - ../frontend:/Overbookd-frontend
+      - ../frontend:/overbookd/frontend
     environment:
       - BASE_URL
     restart: always

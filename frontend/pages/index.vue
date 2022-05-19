@@ -19,9 +19,7 @@
           <v-btn value="Signup" to="/signup" color="success">
             S'inscrire
           </v-btn>
-          <v-btn value="Accueil" to="/acceuil" color="info">
-            Se connecter
-          </v-btn>
+          <v-btn color="info" @click="login"> Se connecter </v-btn>
         </v-card-actions>
       </v-card>
     </v-content>
@@ -30,11 +28,27 @@
 <script>
 export default {
   layout: "empty",
-
   data() {
     return {
       showPassword: false,
+      credentials: {
+        username: undefined,
+        password: undefined,
+      },
     };
+  },
+  methods: {
+    async login() {
+      try {
+        await this.$auth.loginWith("local", { data: this.credentials }); // try to log user in
+        console.log("connected to API");
+        await this.$router.push({
+          path: "/Acceuil",
+        }); // redirect to homepage
+      } catch (e) {
+        console.error(e);
+      }
+    },
   },
 };
 </script>

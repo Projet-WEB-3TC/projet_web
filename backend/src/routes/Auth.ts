@@ -63,7 +63,7 @@ export const signup: RequestHandler = async function (req, res) {
     await sendValidationMail(email);
   } catch (error) {
     //todo log errors
-    res.status(500).send("Error while saving user");
+    res.status(501).send("Error while saving user");
   }
 };
 

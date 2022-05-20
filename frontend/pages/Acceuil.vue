@@ -7,8 +7,9 @@
 
       <v-card-subtitle
         ><br />
-        est pour le moment une version bêta, mais bientôt vous pourrez retrouver
-        ici toutes les fonctionnalités d'Overbookd adaptées pour mobile !
+        C'est pour le moment une version bêta, mais bientôt vous pourrez
+        retrouver ici toutes les fonctionnalités d'Overbookd adaptées pour
+        mobile !
       </v-card-subtitle>
 
       <v-card-actions>

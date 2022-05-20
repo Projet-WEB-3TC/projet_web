@@ -92,6 +92,7 @@ export const login: RequestHandler = async function (req, res) {
       });
     }
     logger.info(`user connected ${userInput.username}`);
+    return res.json(user);
 /*
     jwt.sign(
       { userID: user._id },

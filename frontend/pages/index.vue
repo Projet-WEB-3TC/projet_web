@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <v-content>
+    <v-main>
       <v-card width="500" class="mx-auto mt-9" align="center">
         <v-card-title>Bienvenue sur Overbookd Companion!</v-card-title>
         <v-card-text>
@@ -39,7 +39,7 @@
           <v-btn color="info" @click="login()"> Se connecter </v-btn>
         </v-card-actions>
       </v-card>
-    </v-content>
+    </v-main>
   </v-app>
 </template>
 <script>
@@ -55,12 +55,26 @@ export default {
     };
   },
   methods: {
-    async login() {
+    login() {
       try {
-        console.log(this.credentials.body);
-        // this.$axios.post("/login", this.credentials); // try to log user in
+        // console.log(this.credentials);
+        this.$axios
+          .post("/login", this.credentials)
+          .then(function (response) {
+            console.log("done");
+            // console.log(this.$accessor);
+            console.log("connected to API");
+            this.$router.push({
+              path: "/Acceuil",
+            });
+          })
+          .catch(function (error) {
+            console.log("ERROR");
+            console.log(error);
+          }); // try to log user in
+
         console.log("connected to API");
-        await this.$router.push({
+        this.$router.push({
           path: "/Acceuil",
         }); // redirect to homepage
       } catch (e) {

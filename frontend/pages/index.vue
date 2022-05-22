@@ -55,25 +55,14 @@ export default {
     };
   },
   methods: {
-    login() {
+    async login() {
       try {
         // console.log(this.credentials);
-        this.$axios
-          .post("/login", this.credentials)
-          .then(function (response) {
-            console.log("done");
-            // console.log(this.$accessor);
-            console.log("connected to API");
-            this.$router.push({
-              path: "/Acceuil",
-            });
-          })
-          .catch(function (error) {
-            console.log("ERROR");
-            console.log(error);
-          }); // try to log user in
-
+        const user = await this.$axios.post("/login", this.credentials); // try to log user in
+        console.log("done");
         console.log("connected to API");
+        console.log(user.data);
+        await this.$accessor.user.SET_USER(user.data); // set user in accessor
         this.$router.push({
           path: "/Acceuil",
         }); // redirect to homepage

@@ -44,7 +44,7 @@ export const signup: RequestHandler = async function (req, res) {
     delete userInput.password2; // DO NOT SAVE INTO DB
 
     user = await UserModel.create(userInput);
-/*
+
     jwt.sign(
       { userID: user._id },
       "randomString",
@@ -57,10 +57,10 @@ export const signup: RequestHandler = async function (req, res) {
           token,
         });
       }
-    );*/
+    );
     //send validation mail
-    const email = req.body.email;
-    await sendValidationMail(email);
+    //const email = req.body.email;
+    //await sendValidationMail(email);
   } catch (error) {
     //todo log errors
     res.status(501).send("Error while saving user");
@@ -92,8 +92,8 @@ export const login: RequestHandler = async function (req, res) {
       });
     }
     logger.info(`user connected ${userInput.username}`);
-    return res.json(user);
-/*
+    
+
     jwt.sign(
       { userID: user._id },
       "randomString",
@@ -106,7 +106,8 @@ export const login: RequestHandler = async function (req, res) {
           token,
         });
       }
-    );*/
+    );
+    return res.json(user);
   } catch (error) {
     logger.err(error);
     res.status(500).json({

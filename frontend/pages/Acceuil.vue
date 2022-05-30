@@ -22,6 +22,7 @@
 <script>
 export default {
   name: "Acceuil",
+  auth: false,
   data() {
     return {
       id: 5,
@@ -34,16 +35,21 @@ export default {
       value: null,
     };
   },
-
-  mounted() {
-    console.log(this.me);
-    this.firstname = this.me.firstname;
-  },
-
   computed: {
     me() {
       return this.$accessor.user.me;
     },
+  },
+
+  async mounted() {
+    try {
+      console.log(this.me);
+      this.firstname = this.me.firstname;
+      const myFTs = await this.$axios.get(`/FT/orga-requis/${this.me._id}`);
+      console.log(myFTs.data);
+    } catch (e) {
+      console.error(e);
+    }
   },
 };
 </script>

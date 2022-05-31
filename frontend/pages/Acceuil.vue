@@ -2,7 +2,7 @@
   <v-col cols="12">
     <v-card color="#385F73" dark class="justify-center">
       <v-card-title class="text-h5">
-        Bienvenue sur Overbookd {{ this.me.firstname }}
+        Bienvenue sur Overbookd {{ firstname }}
       </v-card-title>
 
       <v-card-subtitle
@@ -20,6 +20,8 @@
 </template>
 
 <script>
+import { LocalNotifications } from "@capacitor/local-notifications";
+
 export default {
   name: "Acceuil",
   auth: false,
@@ -33,6 +35,7 @@ export default {
       show: false,
       items: ["hard1", "hard2", "hard3", "hard4", "hard5"],
       value: null,
+      myFTs: null,
     };
   },
   computed: {
@@ -45,11 +48,48 @@ export default {
     try {
       console.log(this.me);
       this.firstname = this.me.firstname;
-      const myFTs = await this.$axios.get(`/FT/orga-requis/${this.me._id}`);
-      console.log(myFTs.data);
+      const ftTMP = await this.$axios.get(`/FT/orga-requis/${this.me._id}`);
+      await this.$accessor.FT.SET_ALL_FTS(ftTMP.data[0].fts);
+      this.myFTs = this.$accessor.FT.Fts;
+      console.log(this.myFTs);
+
+      if (LocalNotifications.checkPermissions() === "denied") {
+        LocalNotifications.requestPermissions();
+      }
+      if (LocalNotifications.checkPermissions() !== "denied") {
+        this.myFTs.forEach((ft) => {
+          LocalNotifications.schedule({
+            notifications: [
+              {
+                title: ft.name + " " + ft.TFname,
+                body: ft.description,
+                id: ft._id,
+                schedule: {
+                  at: new Date(ft.start),
+                },
+                sound: null,
+                attachments: null,
+                actionTypeId: "",
+                extra: null,
+              },
+            ],
+          });
+          console.log(
+            "Notif " +
+              ft._id +
+              " " +
+              ft.name +
+              ft.TFname +
+              " scheduled at " +
+              new Date(ft.start)
+          );
+        });
+      }
     } catch (e) {
       console.error(e);
     }
   },
+
+  methods: {},
 };
 </script>

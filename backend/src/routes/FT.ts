@@ -258,10 +258,13 @@ export async function myPlanning(req: Request, res: Response) {
             $push: {
               count: "$count",
               name: "$general.name",
+              TFname: "$timeframes.name",
               status: "$status",
               start: "$timeframes.start",
               end: "$timeframes.end",
-              conflits: "$conflicts"
+              conflits: "$conflicts",
+              _id: "$_id",
+              description : "$details.description"
             },
           }
         }

@@ -8,7 +8,7 @@ export const protect: () => RequestHandler = () => {
     const authorization = req.header("Authorization");
 
     if (!authorization) {
-      return res.status(400).json({
+      return res.status(451).json({
         msg: "Authorization header missing or invalid",
       });
     }
@@ -18,7 +18,7 @@ export const protect: () => RequestHandler = () => {
       authorizationSplited[0] != "Bearer" ||
       authorizationSplited.length != 2
     ) {
-      return res.status(400).json({
+      return res.status(452).json({
         msg: "Malformed bearer token",
       });
     }
@@ -28,13 +28,13 @@ export const protect: () => RequestHandler = () => {
     try {
       const decoded = jwt.verify(token, "randomString");
       if (typeof decoded == "string" || !("userID" in decoded)) {
-        return res.status(400).json({
+        return res.status(453).json({
           msg: "Invalid token content",
         });
       }
       const user = await UserModel.findOne({ _id: decoded.userID });
       if (!user) {
-        return res.status(400).json({
+        return res.status(454).json({
           msg: "Could not retrieve token's user in database",
         });
       }

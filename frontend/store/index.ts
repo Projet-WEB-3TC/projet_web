@@ -23,7 +23,7 @@ export const mutations = mutationTree(state, {});
 
 export const actions = actionTree({ state, getters, mutations }, {});
 
-export type RootState = ReturnType<typeof state>;
+// export type RootState = ReturnType<typeof state>;
 
 export const accessorType = getAccessorType({
   state,

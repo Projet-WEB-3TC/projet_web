@@ -1,15 +1,31 @@
 module.exports = {
   root: true,
   env: {
-    browser: true,
     node: true,
+    browser: true,
+  },
+  extends: [
+    "plugin:vue/recommended",
+    "eslint:recommended",
+    "prettier/vue",
+    "prettier/@typescript-eslint",
+    "plugin:prettier/recommended",
+    "plugin:cypress/recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+  ],
+  rules: {
+    "vue/component-name-in-template-casing": ["error", "PascalCase"],
+    "no-unused-vars": "warn",
+    "vue/no-unused-vars": "warn",
+    "vue/require-v-for-key": "warn",
+    "vue/valid-v-slot": ["error", { allowModifiers: true }],
+    "cypress/no-unnecessary-waiting": "off",
+    "vue/no-mutating-prop": "off",
+  },
+  globals: {
+    $nuxt: true,
   },
   parserOptions: {
-    parser: "@babel/eslint-parser",
-    requireConfigFile: false,
+    parser: "@typescript-eslint/parser",
   },
-  extends: ["@nuxtjs", "plugin:nuxt/recommended", "prettier"],
-  plugins: [],
-  // add your custom rules here
-  rules: { "vue/multi-word-component-names": 0 },
 };

@@ -25,7 +25,7 @@ export function getUser(context: any) {
 }
 
 /**
- * @deprecated
+ * 
  */
 export function getConfig(context: any, key: string) {
   const conf = context.$store.state.config.data.data.find(

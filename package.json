@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "nuxt-typed-vuex": "^0.3.0",
+    "typed-vuex": "^0.3.0"
+  }
+}

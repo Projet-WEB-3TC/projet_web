@@ -130,9 +130,9 @@ FArouter.delete(
 
 // FT-routes
 const FTrouter = Router();
-FTrouter.get("/", authMiddleware.protect(), getAllFTs);
+FTrouter.get("/", getAllFTs);
 FTrouter.get("/count", authMiddleware.protect(), getFTsNumber);
-FTrouter.get("/orga-requis/:userID", authMiddleware.protect(), myPlanning);
+FTrouter.get("/orga-requis/:userID", myPlanning);
 FTrouter.get("/orga-requis", authMiddleware.protect(), getOrgaRequis);
 FTrouter.get("/:FTID([0-9]+)", authMiddleware.protect(), getFTByID);
 FTrouter.post(

@@ -34,6 +34,7 @@ export default {
     '@nuxtjs/eslint-module',
     // https://go.nuxtjs.dev/vuetify
     '@nuxtjs/vuetify',
+    "nuxt-typed-vuex",
   ],
 
   // Modules: https://go.nuxtjs.dev/config-modules
@@ -44,12 +45,33 @@ export default {
     '@nuxtjs/pwa',
     // https://go.nuxtjs.dev/content
     '@nuxt/content',
+    "@nuxtjs/auth-next",
   ],
+  
+   auth: {
+    strategies: {
+      local: {
+        token: {
+          property: "token",
+          global: true,
+          // required: true,
+          // type: 'Bearer'
+        },
+        endpoints: {
+          login: { url: "https://overbookd.traefik.me/api/login", method: "post" },
+          logout: { url: "https://overbookd.traefik.me/api/logout", method: "post" },
+          // user: { url: "/user", method: "get" },
+          user: false,
+        },
+      },
+    },
+  },
+
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
     // Workaround to avoid enforcing hard-coded localhost:3000: https://github.com/nuxt-community/axios-module/issues/308
-    baseURL: '/',
+    baseURL: 'https://overbookd.traefik.me/api',
   },
 
   // PWA module configuration: https://go.nuxtjs.dev/pwa
@@ -82,5 +104,5 @@ export default {
   },
 
   // Build Configuration: https://go.nuxtjs.dev/config-build
-  build: {},
+  build: {transpile: [/typed-vuex/],},
 }

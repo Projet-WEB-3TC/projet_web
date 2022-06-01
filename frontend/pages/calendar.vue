@@ -43,6 +43,7 @@
           ref="calendar"
           v-model="focus"
           color="primary"
+          type ="4day"
           :events="events"
           :event-color="getEventColor"
           :type="type"

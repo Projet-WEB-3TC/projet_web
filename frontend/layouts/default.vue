@@ -6,19 +6,9 @@
         <v-icon>mdi-home</v-icon>
       </v-btn>
 
-      <v-btn value="Calendar" to="/calendar">
-        <span>Calendrier</span>
-        <v-icon>mdi-calendar</v-icon>
-      </v-btn>
-
       <v-btn value="Trombi" to="/trombinoscope">
         <span>Annuaire</span>
         <v-icon>mdi-account</v-icon>
-      </v-btn>
-
-      <v-btn value="Notif" to="/notif">
-        <span>Notifications</span>
-        <v-icon>mdi-bell</v-icon>
       </v-btn>
     </v-bottom-navigation>
     <v-app-bar fixed app :style="isJauneActive ? jauneStyle : ''">

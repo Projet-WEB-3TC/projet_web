@@ -58,8 +58,8 @@ export default {
           // type: 'Bearer'
         },
         endpoints: {
-          login: { url: "https://overbookd.traefik.me/api/login", method: "post" },
-          logout: { url: "https://overbookd.traefik.me/api/logout", method: "post" },
+          login: { url: process.env.BASE_URL + "/login" || "https://overbookd.traefik.me/api/login", method: "post" },
+          logout: { url: process.env.BASE_URL + "/logout" || "https://overbookd.traefik.me/api/logout", method: "post" },
           // user: { url: "/user", method: "get" },
           user: false,
         },
@@ -71,7 +71,7 @@ export default {
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
     // Workaround to avoid enforcing hard-coded localhost:3000: https://github.com/nuxt-community/axios-module/issues/308
-    baseURL: 'https://overbookd.traefik.me/api',
+    baseURL: process.env.BASE_URL || 'https://overbookd.traefik.me/api',
   },
 
   // PWA module configuration: https://go.nuxtjs.dev/pwa

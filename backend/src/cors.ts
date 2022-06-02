@@ -1,6 +1,11 @@
 import cors from "cors";
 
-const ALLOWED_ORIGINS = ["http://localhost:3000", "https://localhost:3000", "http://localhost:1234"];
+const ALLOWED_ORIGINS = [
+  "http://localhost:3000",
+  "https://localhost:3000",
+  "http://localhost:1234",
+  "http://172.105.70.161:1234/"
+];
 
 const mCors = cors({
   allowedHeaders: [
@@ -9,12 +14,12 @@ const mCors = cors({
     "Content-Type",
     "Accept",
     "X-Access-Token",
-    "Authorization",
+    "Authorization"
   ],
   credentials: true,
   methods: "GET,HEAD,OPTIONS,PUT,PATCH,POST,DELETE",
   origin: ALLOWED_ORIGINS,
-  preflightContinue: false,
+  preflightContinue: false
 });
 
 // const mCors = cors();

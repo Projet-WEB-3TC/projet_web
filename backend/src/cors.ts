@@ -4,7 +4,7 @@ const ALLOWED_ORIGINS = [
   "http://localhost:3000",
   "https://localhost:3000",
   "http://localhost:1234",
-  "http://172.105.70.161:1234/"
+  "http://172.105.70.161:1234"
 ];
 
 const mCors = cors({

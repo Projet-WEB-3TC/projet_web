@@ -57,32 +57,42 @@ export default {
         LocalNotifications.requestPermissions();
       }
       if (LocalNotifications.checkPermissions() !== "denied") {
+        const pendingNotif = (await LocalNotifications.getPending())
+          .notifications;
+
+        pendingNotif.forEach((notif) => {
+          LocalNotifications.cancel(notif.id);
+          pendingNotif.push(notif);
+        });
+
         this.myFTs.forEach((ft) => {
-          LocalNotifications.schedule({
-            notifications: [
-              {
-                title: ft.name + " " + ft.TFname,
-                body: ft.description,
-                id: ft._id,
-                schedule: {
-                  at: new Date(ft.start),
+          if (ft.start > Date.now() + 1000 * 5) {
+            LocalNotifications.schedule({
+              notifications: [
+                {
+                  title: ft.name + " " + ft.TFname,
+                  body: ft.description,
+                  id: ft._id + ft.start,
+                  schedule: {
+                    at: new Date(ft.start - 1000 * 60 * 5), // 5 min before start time
+                  },
+                  sound: null,
+                  attachments: null,
+                  actionTypeId: "",
+                  extra: null,
                 },
-                sound: null,
-                attachments: null,
-                actionTypeId: "",
-                extra: null,
-              },
-            ],
-          });
-          console.log(
-            "Notif " +
-              ft._id +
-              " " +
-              ft.name +
-              ft.TFname +
-              " scheduled at " +
-              new Date(ft.start)
-          );
+              ],
+            });
+            console.log(
+              "Notif " +
+                ft._id +
+                " " +
+                ft.name +
+                ft.TFname +
+                " scheduled at " +
+                new Date(ft.start)
+            );
+          }
         });
       }
     } catch (e) {

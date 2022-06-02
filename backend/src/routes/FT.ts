@@ -1,7 +1,12 @@
+import StatusCodes from "http-status-codes";
 import {Request, Response} from "express";
 import FTModel, {IFT} from "@entities/FT";
 import logger from "@shared/Logger";
 import FAModel from "@entities/FA";
+import {updateConflictsByFTCount} from "@src/services/conflict";
+import {timeframeToTimeSpan} from "@src/services/slicing";
+import TimeSpanModel, {ITimeSpan} from "@entities/TimeSpan";
+import ConflictModel from "@entities/Conflict";
 import {Schema, Types} from "mongoose";
 
 export async function getAllFTs(req: Request, res: Response) {
@@ -14,8 +19,85 @@ export async function getFTByID(req: Request, res: Response) {
   res.json(mFT);
 }
 
+export async function createFT(req: Request, res: Response) {
+  const mFT = <IFT>req.body;
+  const count = await FTModel.countDocuments();
+  mFT.count = count + 1;
+  const FT = await FTModel.create(mFT);
+  await updateConflictsByFTCount(mFT.count);
+  res.json(FT);
+}
 
+export async function updateFT(
+  req: Request<Record<string, never>, Record<string, never>, IFT>,
+  res: Response
+): Promise<void> {
+  const mFT = req.body;
+  if (mFT._id) {
+    try {
+      await FTModel.findByIdAndUpdate(mFT._id, mFT);
+      await updateConflictsByFTCount(mFT.count);
+      if(mFT.status === "refused") {
+        //delete all timespans of this FT
+        logger.info(`delete all timespans of this FT ${mFT.count}`);
+        await TimeSpanModel.deleteMany({FTID: mFT.count});
+      }
 
+    } catch (e) {
+      logger.err(e);
+    }
+    res.sendStatus(StatusCodes.OK);
+  } else {
+    res.sendStatus(StatusCodes.BAD_REQUEST);
+  }
+}
+
+/**
+ * @deprecated
+ */
+export async function unassign(req: Request, res: Response) {
+  // unassign a user from an FT
+  // const { FTID, _id } = req.body;
+  // const FT = await FTModel.findById(FTID);
+  // if (FT) {
+  //   const mFT = <IFT>FT.toObject();
+  //   mFT.schedules?.forEach((schedule) => {
+  //     if (schedule.assigned) {
+  //       schedule.assigned = schedule.assigned.filter(
+  //         (assign) => assign._id !== _id
+  //       );
+  //     }
+  //   });
+  //   logger.info(`unassigning ${FTID}`);
+  //   await FTModel.findByIdAndUpdate(FTID, {
+  //     schedules: mFT.schedules,
+  //   });
+  // }
+}
+
+export async function deleteFT(req: Request, res: Response) {
+  const mFT = <IFT>req.body;
+  logger.info(`deleting FT: ${mFT.count}...`);
+  if (mFT.count) {
+    await FTModel.findOneAndUpdate(
+      {count: mFT.count},
+      {$set: {isValid: false}}
+    );
+    if (mFT.FA) {
+      logger.info(`deleting FT: ${mFT.count} from FA ${mFT.FA}`);
+      const mFA = await FAModel.findOne({count: mFT.FA});
+      if (mFA && mFA.FTs) {
+        mFA.FTs = mFA.FTs.filter((FT) => FT.count !== mFT.count);
+        mFA.save();
+        logger.info(`deleted FT`);
+      }
+    }
+    await updateConflictsByFTCount(mFT.count);
+    res.status(StatusCodes.OK).json({mFT});
+  } else {
+    res.sendStatus(StatusCodes.BAD_REQUEST);
+  }
+}
 
 export async function getFTsNumber(req: Request, res: Response) {
   const FTs: Array<{ _id: { count: number; status: string; FA: number } }> =
@@ -106,6 +188,39 @@ export async function getFTsNumber(req: Request, res: Response) {
   res.json(result);
 }
 
+export async function makeFTReady(req: Request, res: Response) {
+  const FTCount = req.params.count as string;
+  const FT = await FTModel.findOne({count: +FTCount});
+  if (FT) {
+    const mFT = <IFT>FT.toObject();
+    logger.info(`making FT ${mFT.general.name} ready...`);
+    mFT.isValid = true;
+    mFT.status = "ready";
+    const r: ITimeSpan[][] = [];
+
+    try {
+      // slice timeframes
+      for (const timeframe of mFT.timeframes) {
+        const timespan = await timeframeToTimeSpan(timeframe, mFT.count);
+        if (timespan) {
+          r.push(timespan);
+          await TimeSpanModel.insertMany(timespan);
+        }
+      }
+      // await FTModel.findOneAndUpdate({ count: mFT.count, }, mFT);
+      res.status(StatusCodes.OK).json(r);
+    } catch (e) {
+      logger.err(e);
+      res.status(StatusCodes.BAD_REQUEST).json({
+        message: "Error while making FT ready, timeframe can't be sliced",
+      });
+    }
+  } else {
+    res.status(StatusCodes.BAD_REQUEST).json({
+      message: "FT not found or not validated",
+    });
+  }
+}
 
 export async function myPlanning(req: Request, res: Response) {
   const FTs =
@@ -147,6 +262,7 @@ export async function myPlanning(req: Request, res: Response) {
               status: "$status",
               start: "$timeframes.start",
               end: "$timeframes.end",
+              conflits: "$conflicts",
               _id: "$_id",
               description : "$details.description"
             },
@@ -194,6 +310,7 @@ export async function getOrgaRequis(req: Request, res: Response) {
               status: "$status",
               start: "$timeframes.start",
               end: "$timeframes.end",
+              conflits: "$conflicts"
             },
           }
         }

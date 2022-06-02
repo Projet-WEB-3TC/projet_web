@@ -16,8 +16,6 @@ export const state = () => ({
     validated: [] as any,
     refused: [] as any,
     comments: [] as any,
-    general: [] as any,
-    _id: "",
   } as FT,
   Fts: [] as FT[],
 });

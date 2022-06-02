@@ -1,1 +1,3 @@
-data/dev
+!/data/**/.gitkeep
+/data/**/*
+.env
